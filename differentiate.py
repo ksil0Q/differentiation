@@ -16,7 +16,6 @@ class Expression:  # учимся брать производную x^2
         # x^2 + 2x
         part = ''
         list_of_parts = []
-        operation = ''
         flag = False
         list_sign = []
 
@@ -29,24 +28,22 @@ class Expression:  # учимся брать производную x^2
         part_expr.append(operation)
         print(part_expr)
         for token in tokenize(expr):
-            kind_of_sign = token.kind
-            sign = token.txt
-            if kind_of_sign == 23:
-                sign = sign.replace('x', '*x')
+            if token.kind == 23:
+                token.txt = token.txt.replace('x', '*x')
 
-        #     if kind_of_sign != 1 or sign == '^' or flag:
-        #         part += sign
-        #     else:
-        #         operation = sign
-        #         list_of_parts.append(part)
-        #         part = ''
-        #         flag = True
-        #
-        # if part:
-        #     list_of_parts.append(part)
-        #     list_of_parts.append(operation)
-        #     #print(list_of_parts)
+            if token.kind != 1 or flag:
+                part += token.txt
+            else:
+                operation = token.txt
+                list_of_parts.append(part)
+                part = ''
+                flag = True
+
+        if part:
+            list_of_parts.append(part)
+            list_of_parts.append(operation)
         return part_expr[0], part_expr[1], part_expr[2]
+
     def priority(self, signs):
         dict_of_sign = {}
         min_value = 10

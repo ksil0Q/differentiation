@@ -4,27 +4,64 @@ from tokenizer import tokenize, TOK
 class Expression:  # учимся брать производную x^2
 
     expr = ''
+    left = []
+    right = []
+    operation = ''
 
     def __init__(self, expr: str):
         self.expr = expr
-        self.parse_expr(expr)
+        self.left, self.right, self.operation = self.parse_expr(expr)
 
     def parse_expr(self, expr):
-        # 2x^2 + 4
+        # x^2 + 2x
+        part = ''
+        list_of_parts = []
+        operation = ''
+        flag = False
+        list_sign = []
+
         for token in tokenize(expr):
-            kind, txt, val = token
-            print(TOK.descr[kind], txt, val)
+            if token.kind == 1:
+                list_sign.append(token.txt)
 
-        # return что-то: дерево? если храним в дереве, то оператор в узле.
+        operation = self.priority(list_sign)
+        part_expr = expr.split(operation)
+        part_expr.append(operation)
+        print(part_expr)
+        for token in tokenize(expr):
+            kind_of_sign = token.kind
+            sign = token.txt
+            if kind_of_sign == 23:
+                sign = sign.replace('x', '*x')
 
-    def make_parts(self, ):
-        # return ifфами или switchом рекурсивно вызывать - make_parts()
-        # дифференцировать отдельные части - make_derivative()
-        pass
-
-    def make_derivative(self, part):
-        pass
-
-
-if __name__ == '__main__':
-    a = Expression('x^2 + 2*x')
+        #     if kind_of_sign != 1 or sign == '^' or flag:
+        #         part += sign
+        #     else:
+        #         operation = sign
+        #         list_of_parts.append(part)
+        #         part = ''
+        #         flag = True
+        #
+        # if part:
+        #     list_of_parts.append(part)
+        #     list_of_parts.append(operation)
+        #     #print(list_of_parts)
+        return part_expr[0], part_expr[1], part_expr[2]
+    def priority(self, signs):
+        dict_of_sign = {}
+        min_value = 10
+        key = ""
+        for sign in signs:
+            if sign == "+" or sign == "-":
+                dict_of_sign[sign] = 0
+            if sign == "*" or sign == "/":
+                dict_of_sign[sign] = 1
+            if sign == "^":
+                dict_of_sign[sign] = 2
+            if sign == "cos" or sign == "sin" or sign == "tg" or sign == "ctg":
+                dict_of_sign[sign] = 3
+        for k in dict_of_sign.keys():
+            if min_value > dict_of_sign[k]:
+                min_value = dict_of_sign[k]
+                key = k
+        return key

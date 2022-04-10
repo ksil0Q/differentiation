@@ -1,11 +1,12 @@
 import differentiate
+arr = []
 
 
 def diff(expression):
-
     if expression.operation == "+":
         left = Expression(expression.left)
         right = Expression(expression.right)
+        arr.append(Functor(diff(left), "+", diff(right)).make_func())
         return Functor(diff(left), "+", diff(right))
 
     if expression.operation == "-":
@@ -18,26 +19,25 @@ def diff(expression):
         right = Expression(expression.right)
         left_diff = diff(left)
         right_diff = diff(right)
-        return Functor(Functor(left, right_diff, "*"),
+        return Functor(Functor(left, "*", right_diff),
                        "+",
-                       Functor(right, left_diff, "*"))
+                       Functor(left_diff, "*", right))
 
-    if expression.operation == "/":
-        return Functor(
-            Functor(
-                Functor(diff(expression.left), expression.right, "*"),
-                Functor(expression.right, expression.right, "*"), "/"),
-            Functor(
-                Functor(diff(expression.right), expression.left, "*"),
-                Functor(expression.right, expression.right, "*"), "/"),
-            "-")
-
+    # if expression.operation == "/":
+    #     return Functor(
+    #         Functor(
+    #             Functor(diff(expression.left), expression.right, "*"),
+    #             Functor(expression.right, expression.right, "*"), "/"),
+    #         Functor(
+    #             Functor(diff(expression.right), expression.left, "*"),
+    #             Functor(expression.right, expression.right, "*"), "/"),
+    #         "-")
+    #
     if expression.right == "x":
-        return Functor("1", "", "")
-
-    if expression.right == "3":
-        Functor.str_res += "0"
-        return Functor("0", "", "")
+        return Functor("", "", "1")
+    #
+    if expression.right == "2" or expression.right == "3":
+        return Functor("", "", "0")
 
     # if expression.operation == "^":
     #     return Functor(expression.right,
@@ -74,15 +74,14 @@ class Functor:
         self.left = sub_func_left
         self.right = sub_func_right
         self.operation = operation
-        self.str_res = self.left + self.operation + self.right
 
     def make_func(self):
         return "{0}{1}{2}".format(self.left, self.operation, self.right)
-    print(str_res)
 
 
 if __name__ == '__main__':
     expr = Expression('2*x + 3')
     res = diff(expr)
+    print(arr)
 
 

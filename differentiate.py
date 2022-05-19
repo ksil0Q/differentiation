@@ -46,5 +46,5 @@ def parse_expr(expr):
 
     if part:
         list_of_parts.append(part)
-    return list_of_parts[0], list_of_parts[2], list_of_parts[1]
+    return list_of_parts
 
